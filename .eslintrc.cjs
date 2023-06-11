@@ -36,6 +36,7 @@ module.exports = {
         'react/prop-types': 'off',
         'react-refresh/only-export-components': 'warn',
         '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/no-explicit-any': 'error',
         '@typescript-eslint/ban-types': [
             'error',
             {
