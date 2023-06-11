@@ -6,16 +6,36 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:fix": "eslint ./src --ext .jsx,.js,.ts,.tsx --quiet --fix --ignore-path ./.gitignore",
+    "lint:format": "prettier  --loglevel warn --write \"./**/*.{js,jsx,ts,tsx,css,md,json}\" ",
+    "lint": "yarn lint:format && yarn lint:fix ",
+    "type-check": "tsc"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.1.4",
+    "@rajesh896/broprint.js": "^2.1.1",
+    "antd": "^5.6.1",
+    "axios": "^1.4.0",
+    "crypto-js": "^4.1.1",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^10.12.16",
+    "intersection-observer": "^0.12.2",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-input-mask": "^2.0.4",
+    "react-router-dom": "^6.12.1",
+    "styled-components": "^5.3.11",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
+    "@types/file-saver": "^2.0.5",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
+    "@types/react-input-mask": "^3.0.2",
+    "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "@vitejs/plugin-react": "^4.0.0",
