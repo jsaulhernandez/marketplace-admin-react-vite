@@ -72,13 +72,13 @@ const WrapperContent = styled(Content)<{
     .title-component {
         font-size: 20px;
         font-weight: 700 !important;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding: 24px 0px 12px 24px;
         line-height: 28px;
         color: var(--primary-text-color);
     }
 
     .container {
+        padding: 24px;
         min-height: 360px;
         border-radius: 10px;
     }
