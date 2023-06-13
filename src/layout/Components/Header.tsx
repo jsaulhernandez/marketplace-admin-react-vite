@@ -32,14 +32,15 @@ const MainHeader: FC<MainHeaderProps> = (props) => {
 };
 
 const Wrapper = styled(Header)`
+    height: 67px;
     background-color: var(--secondary-color);
     border: 2px solid var(--quaternary-color);
     position: fixed;
-    transition: width 0.3s ease-out;
-    -webkit-transition: width 0.3s ease-out;
-    -moz-transition: width 0.3s ease-out;
-    -o-transition: width 0.3s ease-out;
-    -ms-transition: width 0.3s ease-out;
+    transition: all 0.2s, background 0s;
+    -webkit-transition: all 0.2s, background 0s;
+    -moz-transition: all 0.2s, background 0s;
+    -o-transition: all 0.2s, background 0s;
+    -ms-transition: all 0.2s, background 0s;
 `;
 
 export default MainHeader;

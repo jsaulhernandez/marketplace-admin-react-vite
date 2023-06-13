@@ -34,21 +34,15 @@ const MainLayout = () => {
             <Layout>
                 <MainHeader collapsed={collapsed} />
 
-                <Content style={{ margin: '0 16px' }}>
+                <WrapperContent collapsed={collapsed}>
                     <div className="title-component">{getTitle(router.pathname)}</div>
-                    <div
-                        style={{
-                            padding: 24,
-                            minHeight: 360,
-                            background: 'var(--secondary-color)',
-                        }}
-                    >
+                    <div className="container">
                         <Outlet />
                     </div>
-                </Content>
+                </WrapperContent>
 
                 <Footer className="flex items-center justify-center">
-                    <KPText text={`&#169; KPlace ${year}`} fontWeight={500} />
+                    <KPText text={<>&#169;{` KPlace ${year}`}</>} fontWeight={500} />
                 </Footer>
             </Layout>
         </WrapperLayout>
@@ -58,10 +52,22 @@ const MainLayout = () => {
 const WrapperLayout = styled(Layout)`
     background-color: var(--tertiary-color);
 
+    .ant-layout,
     .ant-layout-content,
     .ant-layout-footer {
         background-color: var(--tertiary-color);
     }
+`;
+
+const WrapperContent = styled(Content)<{
+    collapsed: boolean;
+}>`
+    margin: 67px 16px 0px ${({ collapsed }) => (collapsed ? '66px' : '288px')};
+    transition: all 0.2s, background 0s;
+    -webkit-transition: all 0.2s, background 0s;
+    -moz-transition: all 0.2s, background 0s;
+    -o-transition: all 0.2s, background 0s;
+    -ms-transition: all 0.2s, background 0s;
 
     .title-component {
         font-size: 20px;
@@ -70,6 +76,14 @@ const WrapperLayout = styled(Layout)`
         padding-bottom: 10px;
         line-height: 28px;
         color: var(--primary-text-color);
+    }
+
+    .container {
+        padding: 24px;
+        min-height: 360px;
+        background: var(--secondary-color);
+        border: 2px solid var(--quaternary-color);
+        border-radius: 10px;
     }
 `;
 
