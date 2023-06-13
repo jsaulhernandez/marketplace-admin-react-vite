@@ -79,10 +79,7 @@ const WrapperContent = styled(Content)<{
     }
 
     .container {
-        padding: 24px;
         min-height: 360px;
-        background: var(--secondary-color);
-        border: 2px solid var(--quaternary-color);
         border-radius: 10px;
     }
 `;
