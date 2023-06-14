@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 
-export type TypeButton = 'primary' | 'secondary' | 'link';
+export type TypeButton = 'primary' | 'secondary' | 'link' | 'danger';
 
 export interface KPButtonProps {
     theme?: 'dark' | 'light';
@@ -154,12 +154,43 @@ const Button = styled.button<{
         }
     }
 
+    &.danger-light {
+        background-color: #e64547;
+        color: var(--secondary-color);
+
+        &:hover {
+            background-color: #ea5456;
+        }
+
+        &:active {
+            background-color: #e64547;
+        }
+    }
+
+    &.danger-dark {
+        border: 2px solid #e64547;
+        background-color: transparent;
+        color: #e64547;
+
+        &:hover {
+            color: var(--secondary-color);
+            background-color: #e64547;
+        }
+
+        &:active {
+            background-color: transparent;
+            color: #e64547;
+        }
+    }
+
     &.primary-light,
     &.primary-dark,
     &.secondary-light,
     &.secondary-dark,
     &.link-light,
-    &.link-dark {
+    &.link-dark,
+    &.danger-light,
+    &.danger-dark {
         transition: all 0.1s ease-in-out;
         position: relative;
 
