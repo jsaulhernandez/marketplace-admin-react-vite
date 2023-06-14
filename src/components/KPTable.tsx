@@ -44,26 +44,20 @@ const KPTable: FC<KPTableProps> = (props) => {
                     pagination={false}
                 />
             </div>
-            <div className="KPTable_pagination flex flex-wrap justify-between items-center g-10">
+            <div className="KPTable_pagination flex flex-wrap justify-center items-center g-10">
                 <KPButton
-                    type="primary"
-                    theme="dark"
-                    prefix={<LeftOutlined />}
+                    type="link"
+                    prefix={<LeftOutlined className="icon" />}
                     disabled={!hasPreviousPage}
                     onClick={() => onChangePagination('down')}
-                >
-                    Anterior
-                </KPButton>
+                />
                 <KPText text={`Página ${getPaginationInformation()}`} />
                 <KPButton
-                    type="primary"
-                    theme="dark"
-                    suffix={<RightOutlined />}
+                    type="link"
+                    suffix={<RightOutlined className="icon" />}
                     disabled={!hasNextPage}
                     onClick={() => onChangePagination('up')}
-                >
-                    Siguiente
-                </KPButton>
+                />
             </div>
         </Wrapper>
     );
@@ -83,9 +77,31 @@ const Wrapper = styled.div`
         border-top: 0px;
         border-bottom-left-radius: 10px;
         border-bottom-right-radius: 10px;
+
+        button {
+            &:disabled {
+                background-color: transparent;
+
+                .icon {
+                    color: var(--secondary-text-color);
+
+                    &:hover {
+                        transform: scale(1.2);
+                    }
+                }
+            }
+        }
+
+        button .icon {
+            transform: scale(1.2);
+
+            &:hover {
+                transform: scale(1.4);
+            }
+        }
     }
 
-    @media screen and (max-width: 575px) {
+    @media screen and (max-width: 410px) {
         .KPTable_pagination {
             justify-content: center;
             flex-direction: column;
