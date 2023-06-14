@@ -358,3 +358,11 @@
     color: var(--tertiary-text-color);
     margin-right: 15px;
 }
+
+.ant-tooltip .ant-tooltip-inner {
+    background-color: var(--primary-color);
+}
+
+.ant-tooltip .ant-tooltip-arrow::before {
+    background: var(--primary-color);
+}
