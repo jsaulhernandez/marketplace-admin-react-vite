@@ -100,6 +100,10 @@ const CustomTable = styled(Table)`
             background-color: transparent !important;
         }
     }
+
+    .ant-table-tbody > tr.ant-table-row:hover > td {
+        background-color: #e6effc;
+    }
 `;
 
 export default KPTable;
