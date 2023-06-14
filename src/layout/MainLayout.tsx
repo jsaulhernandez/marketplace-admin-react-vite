@@ -41,9 +41,12 @@ const MainLayout = () => {
                     </div>
                 </WrapperContent>
 
-                <Footer className="flex items-center justify-center">
+                <WrapperFooter
+                    className="flex items-center justify-center"
+                    collapsed={collapsed}
+                >
                     <KPText text={<>&#169;{` KPlace ${year}`}</>} fontWeight={500} />
-                </Footer>
+                </WrapperFooter>
             </Layout>
         </WrapperLayout>
     );
@@ -82,6 +85,17 @@ const WrapperContent = styled(Content)<{
         min-height: 360px;
         border-radius: 10px;
     }
+`;
+
+const WrapperFooter = styled(Footer)<{
+    collapsed: boolean;
+}>`
+    margin-left: ${({ collapsed }) => (collapsed ? '66px' : '288px')};
+    transition: all 0.2s, background 0s;
+    -webkit-transition: all 0.2s, background 0s;
+    -moz-transition: all 0.2s, background 0s;
+    -o-transition: all 0.2s, background 0s;
+    -ms-transition: all 0.2s, background 0s;
 `;
 
 export default MainLayout;
