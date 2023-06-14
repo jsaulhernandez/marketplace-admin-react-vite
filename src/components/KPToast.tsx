@@ -8,7 +8,7 @@ import {
     WarningOutlined,
 } from '@ant-design/icons';
 
-type NotificationType = 'success' | 'info' | 'warning' | 'error';
+import { NotificationType } from '@constants/Constants.constants';
 
 const getIconNotification = (type: NotificationType) => {
     return {
