@@ -59,13 +59,47 @@ const KPInput: FC<KPInputProps> = (props) => {
 
 const getHeight = (height?: number) => {
     if (height) return `${height}px`;
-    return 'auto';
+    return '40px';
 };
 
 const InputWrapper = styled(Input)<{
     height?: number;
 }>`
     height: ${({ height }) => getHeight(height)};
+
+    .ant-input {
+        height: ${({ height }) => getHeight(height)};
+    }
+
+    .ant-input-wrapper {
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
+
+        &:focus-within,
+        :hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
+
+            .anticon {
+                color: var(--primary-color);
+            }
+        }
+
+        > .ant-input-group-addon {
+            background: transparent;
+            border: 0px;
+        }
+
+        > .ant-input {
+            border: 0px;
+
+            &:hover,
+            :focus {
+                border-color: transparent;
+                box-shadow: none;
+            }
+        }
+    }
 `;
 
 export default KPInput;
