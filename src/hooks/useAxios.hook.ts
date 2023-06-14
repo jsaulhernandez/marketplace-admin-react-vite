@@ -45,7 +45,7 @@ const useAxios = <M extends object>(): ReturnMethod<M> => {
                 response = responseAxios.data;
             } else {
                 //Si vienen definidos parametros, la petición puede ser POST, PUT, GET O DELETE
-                if (['PUT', 'POST'].includes(request.method)) {
+                if (['PUT', 'PATCH', 'POST'].includes(request.method)) {
                     const responseAxios = await axios(`${url}${request.path}`, {
                         method: request.method,
                         headers: Object.fromEntries(headers),

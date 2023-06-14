@@ -1,4 +1,4 @@
-type methods = 'POST' | 'UPDATE' | 'DELETE' | 'GET';
+type methods = 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'GET';
 
 export interface OptionRequest<M extends object> {
     method: methods;
