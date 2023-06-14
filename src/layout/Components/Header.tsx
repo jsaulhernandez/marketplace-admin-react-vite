@@ -41,6 +41,7 @@ const Wrapper = styled(Header)`
     -moz-transition: all 0.2s, background 0s;
     -o-transition: all 0.2s, background 0s;
     -ms-transition: all 0.2s, background 0s;
+    z-index: 3;
 `;
 
 export default MainHeader;
