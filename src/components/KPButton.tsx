@@ -167,6 +167,7 @@ const Button = styled.button<{
             background-color: #eeeeee;
             color: var(--secondary-color);
             cursor: default;
+            border: none;
         }
     }
 `;
