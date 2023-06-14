@@ -8,7 +8,6 @@ export interface ProductModel {
     id: number;
     name: string;
     title: string;
-    description: string;
     image: string;
     stock: number;
     price: number;
