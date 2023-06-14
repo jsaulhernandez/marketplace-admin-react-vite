@@ -10,25 +10,25 @@ export interface Pagination {
     hasNextPage: boolean;
 }
 
-export interface Content<M extends Record<string, unknown>> {
+export interface Content<M extends object> {
     data: M | null;
     page: Pagination | null;
 }
 
-export interface ResponseApi<M extends Record<string, unknown>> {
+export interface ResponseApi<M extends object> {
     status: string;
     statusCode: number;
     message: string;
     response: Content<M>;
 }
 
-export interface ReturnDefaultData<M extends Record<string, unknown>> extends Content<M> {
+export interface ReturnDefaultData<M extends object> extends Content<M> {
     statusCode?: number;
     message?: string;
     isSuccess: boolean;
 }
 
-export type ReturnMethod<M extends Record<string, unknown>> = [
+export type ReturnMethod<M extends object> = [
     StateResponse<M>,
     (config: OptionRequest<M> | string) => Promise<ReturnDefaultData<M>>,
 ];

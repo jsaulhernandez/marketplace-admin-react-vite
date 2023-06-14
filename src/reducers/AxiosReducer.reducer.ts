@@ -1,7 +1,7 @@
 import { ActionReducer } from '@hooks/useAxios/Action.use-axios';
 import { StateResponse } from '@hooks/useAxios/State.use-axios';
 
-const axiosReducer = <M extends Record<string, unknown>>(
+const axiosReducer = <M extends object>(
     state: StateResponse<M>,
     action: ActionReducer<M>,
 ): StateResponse<M> => {

@@ -1,10 +1,10 @@
 import { Pagination } from './Response.use-axios';
 
-export interface StateResponse<M extends Record<string, unknown>> {
+export interface StateResponse<M extends object> {
     isSuccess: boolean;
     isError: boolean;
     isLoading: boolean;
     message: string;
-    data: M | null;
-    page: Pagination | null;
+    data?: M;
+    page?: Pagination;
 }

@@ -12,14 +12,14 @@ import { OptionRequest } from './useAxios/OptionRequest.use-axios';
 import AxiosReducer from '@reducers/AxiosReducer.reducer';
 import { API_URL } from '@constants/Constants.constants';
 
-const useAxios = <M extends Record<string, unknown>>(): ReturnMethod<M> => {
+const useAxios = <M extends object>(): ReturnMethod<M> => {
     const initial: StateResponse<M> = {
         isLoading: false,
         isError: false,
         isSuccess: false,
         message: '',
-        data: null,
-        page: null,
+        data: undefined,
+        page: undefined,
     };
 
     const [state, dispatch] = useReducer(AxiosReducer<M>, initial);
@@ -72,8 +72,8 @@ const useAxios = <M extends Record<string, unknown>>(): ReturnMethod<M> => {
                     type: 'SUCCESS',
                     payload: {
                         data: {
-                            data: response.response.data ?? null,
-                            page: response.response.page ?? null,
+                            data: response.response.data,
+                            page: response.response.page,
                         },
                         message: response.message,
                     },
@@ -83,16 +83,16 @@ const useAxios = <M extends Record<string, unknown>>(): ReturnMethod<M> => {
                     isSuccess: true,
                     statusCode: response.statusCode,
                     message: response.message,
-                    data: response.response.data ?? null,
-                    page: response.response.page ?? null,
+                    data: response.response.data,
+                    page: response.response.page,
                 };
             } else {
                 dispatch({
                     type: 'ERROR',
                     payload: {
                         data: {
-                            data: response.response.data ?? null,
-                            page: response.response.page ?? null,
+                            data: response.response.data,
+                            page: response.response.page,
                         },
                         message: response.message,
                     },
@@ -102,8 +102,8 @@ const useAxios = <M extends Record<string, unknown>>(): ReturnMethod<M> => {
                     isSuccess: false,
                     statusCode: response.statusCode,
                     message: response.message,
-                    data: response.response.data ?? null,
-                    page: response.response.page ?? null,
+                    data: response.response.data,
+                    page: response.response.page,
                 };
             }
         } catch (error) {
