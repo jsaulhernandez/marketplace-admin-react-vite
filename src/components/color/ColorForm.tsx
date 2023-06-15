@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react';
 
 import { ColorPicker, Form, Radio } from 'antd';
-import { Color, ColorPickerProps } from 'antd/es/color-picker';
+import { Color } from 'antd/es/color-picker';
 import styled, { CSSProperties } from 'styled-components';
 
 import KPButton from '@components/KPButton';
