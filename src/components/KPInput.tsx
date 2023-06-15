@@ -59,7 +59,7 @@ const KPInput: FC<KPInputProps> = (props) => {
 
 const getHeight = (height?: number) => {
     if (height) return `${height}px`;
-    return '40px';
+    return '30px';
 };
 
 const InputWrapper = styled(Input)<{
