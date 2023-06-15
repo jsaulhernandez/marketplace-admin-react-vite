@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 
 import { Modal } from 'antd';
 import {
@@ -26,6 +26,15 @@ interface KPModalActionsProps {
 }
 
 const KPModalActions: FC<KPModalActionsProps> = (props) => {
+    useEffect(() => {
+        if (props.type === 'success') {
+            setTimeout(() => {
+                props.onClose && props.onClose(false);
+            }, 1000);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.type]);
+
     return (
         <WrapperModal
             open={props.open}

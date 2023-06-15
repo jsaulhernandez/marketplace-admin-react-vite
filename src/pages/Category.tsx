@@ -132,7 +132,7 @@ const Category = () => {
 
     const onConfirm = async () => {
         if (action === 'save' || action === 'update') {
-            const path = `/product${action === 'update' ? '/' + data?.id : ''}`;
+            const path = `/category${action === 'update' ? '/' + data?.id : ''}`;
 
             const response = await fetchSave({
                 method: action === 'save' ? 'POST' : 'PATCH',
@@ -150,6 +150,7 @@ const Category = () => {
 
                 setData(undefined);
                 getCategories();
+                setComponent('Table');
             } else {
                 setTextModal(
                     `Ocurrio un error al ${
@@ -161,7 +162,7 @@ const Category = () => {
         } else {
             const response = await fetchDelete({
                 method: 'DELETE',
-                path: `/product/${data?.id}`,
+                path: `/category/${data?.id}`,
             });
 
             if (response.isSuccess) {
@@ -231,8 +232,8 @@ const Category = () => {
                 title={textModal}
                 onClose={setOpen}
                 onConfirm={onConfirm}
-                typeButton="danger"
-                textConfirm="Sí, eliminar"
+                typeButton={action === 'delete' ? 'danger' : undefined}
+                textConfirm={action === 'delete' ? 'Sí, eliminar' : undefined}
                 loading={stateDelete.isLoading || stateSave.isLoading}
             />
         </>
