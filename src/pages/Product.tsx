@@ -106,7 +106,7 @@ const Product = () => {
             title: 'Acciones',
             render: (_, record: ProductModel) => (
                 <KPActions
-                    onEdit={() => onEdit(record)}
+                    onEdit={() => onAddProduct(record)}
                     onRemove={() => onRemove(record)}
                 />
             ),
@@ -135,20 +135,17 @@ const Product = () => {
         if (response.isSuccess) getProducts(page.toString(), filter);
     };
 
-    const onEdit = (record: ProductModel) => {
-        console.log('onEdit', record);
+    const onAddProduct = (record?: ProductModel) => {
+        setData(record);
+        setComponent('Form');
     };
+
     const onRemove = (record: ProductModel) => {
         setData(record);
         setAction('delete');
         setTextModal('¿Estás seguro de eliminar el registro?');
         setTypeModal('confirm');
         setOpen(!open);
-    };
-
-    const onAddProduct = () => {
-        setData(undefined);
-        setComponent('Form');
     };
 
     const onShowProductInformation = (record: ProductModel) => {
@@ -158,8 +155,33 @@ const Product = () => {
 
     const onConfirm = async () => {
         if (action === 'save' || action === 'update') {
-            console.log('hola');
-            return;
+            const path = `/product${action === 'update' ? '/' + data?.id : ''}`;
+
+            const response = await fetchDelete({
+                method: action === 'save' ? 'POST' : 'PATCH',
+                path,
+                data: data,
+            });
+
+            if (response.isSuccess) {
+                setTextModal(
+                    `Registro ${
+                        action === 'save' ? 'guardado' : 'actualizado'
+                    } correctamente`,
+                );
+                setTypeModal('success');
+
+                setAction(undefined);
+                setData(undefined);
+                getProducts();
+            } else {
+                setTextModal(
+                    `Ocurrio un error al ${
+                        action === 'save' ? 'guardar' : 'actualizar'
+                    } el producto ${data?.title}`,
+                );
+                setTypeModal('error');
+            }
         } else {
             const response = await fetchDelete({
                 method: 'DELETE',
@@ -167,10 +189,11 @@ const Product = () => {
             });
 
             if (response.isSuccess) {
-                setAction(undefined);
-                setData(undefined);
                 setTextModal('Registro eliminado correctamente');
                 setTypeModal('success');
+
+                setAction(undefined);
+                setData(undefined);
                 getProducts();
             } else {
                 setTextModal(`Ocurrio un error al eliminar el producto ${data?.title}`);
