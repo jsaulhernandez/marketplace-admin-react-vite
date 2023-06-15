@@ -68,7 +68,7 @@ const useAxios = <M extends Object>(): ReturnMethod<M> => {
                 }
             }
 
-            if ([200, 2001].includes(response.statusCode)) {
+            if ([200, 201].includes(response.statusCode)) {
                 dispatch({
                     type: 'SUCCESS',
                     payload: {
