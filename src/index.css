@@ -361,13 +361,19 @@
     gap: 40px;
 }
 
-.kp-column label,
-.kp-row label {
+.kp-column > label,
+.kp-row > label {
     width: 100%;
     font-weight: 700 !important;
     line-height: 21px;
     color: var(--tertiary-text-color);
     margin-right: 15px;
+}
+
+.kp-column > label > span,
+.kp-row > label > span {
+    color: #ff4d4f;
+    margin-left: 2px;
 }
 
 .ant-tooltip .ant-tooltip-inner {
@@ -380,4 +386,50 @@
 
 .ant-input-affix-wrapper {
     height: auto !important;
+}
+
+/* styles for radio button */
+.ant-radio-group {
+    width: 100%;
+    font-style: normal;
+    font-weight: 500 !important;
+    font-size: 15px;
+}
+
+label.ant-radio-button-wrapper > span:nth-child(2) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.ant-radio-group-solid
+    :where(.css-dev-only-do-not-override-12jzuas).ant-radio-button-wrapper-checked:not(
+        .ant-radio-button-wrapper-disabled
+    ) {
+    color: #fff;
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.ant-radio-button-wrapper {
+    background: #eff4fb;
+    color: var(--primary-color);
+    border-color: #eff4fb;
+    position: relative;
+    min-height: 40px;
+    width: 50%;
+}
+
+.ant-radio-group-solid
+    :where(.css-dev-only-do-not-override-12jzuas).ant-radio-button-wrapper-checked:not(
+        .ant-radio-button-wrapper-disabled
+    ):hover {
+    background: #1c79f3;
+    border-color: #1c79f3;
+}
+
+:where(.css-dev-only-do-not-override-12jzuas).ant-radio-button-wrapper:hover {
+    background: #e6effc;
+    border-color: #e6effc;
 }
