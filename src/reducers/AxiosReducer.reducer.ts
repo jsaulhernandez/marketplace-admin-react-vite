@@ -1,7 +1,8 @@
 import { ActionReducer } from '@hooks/useAxios/Action.use-axios';
 import { StateResponse } from '@hooks/useAxios/State.use-axios';
 
-const axiosReducer = <M extends object>(
+// eslint-disable-next-line @typescript-eslint/ban-types
+const axiosReducer = <M extends Object>(
     state: StateResponse<M>,
     action: ActionReducer<M>,
 ): StateResponse<M> => {

@@ -40,6 +40,10 @@ module.exports = {
         '@typescript-eslint/ban-types': [
             'error',
             {
+                types: {
+                    // un-ban a type that's banned by default
+                    Object: 'You can use object',
+                },
                 extendDefaults: true,
             },
         ],

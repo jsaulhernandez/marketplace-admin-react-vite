@@ -12,7 +12,8 @@ import { OptionRequest } from './useAxios/OptionRequest.use-axios';
 import AxiosReducer from '@reducers/AxiosReducer.reducer';
 import { API_URL } from '@constants/Constants.constants';
 
-const useAxios = <M extends object>(): ReturnMethod<M> => {
+// eslint-disable-next-line @typescript-eslint/ban-types
+const useAxios = <M extends Object>(): ReturnMethod<M> => {
     const initial: StateResponse<M> = {
         isLoading: false,
         isError: false,

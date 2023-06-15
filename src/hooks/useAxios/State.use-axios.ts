@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { Pagination } from './Response.use-axios';
 
-export interface StateResponse<M extends object> {
+export interface StateResponse<M extends Object> {
     isSuccess: boolean;
     isError: boolean;
     isLoading: boolean;
