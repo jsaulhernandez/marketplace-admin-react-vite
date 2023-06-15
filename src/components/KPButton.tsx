@@ -1,7 +1,8 @@
 import { FC, ReactNode } from 'react';
+import { LoadingOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 
-export type TypeButton = 'primary' | 'secondary' | 'link' | 'danger';
+import { TypeButton } from '@constants/Constants.constants';
 
 export interface KPButtonProps {
     theme?: 'dark' | 'light';
@@ -14,6 +15,7 @@ export interface KPButtonProps {
     htmlType?: 'submit' | 'button' | 'reset';
     disabled?: boolean;
     className?: string;
+    loading?: boolean;
 }
 
 const KPButton: FC<KPButtonProps> = ({ theme = 'light', disabled = false, ...props }) => {
@@ -32,9 +34,12 @@ const KPButton: FC<KPButtonProps> = ({ theme = 'light', disabled = false, ...pro
                     <div className="KPButton_content-prefix">{props.prefix}</div>
                 )}
                 {props.children}
-                {props.suffix && (
-                    <div className="KPButton_content-suffix">{props.suffix}</div>
-                )}
+                {props.suffix ||
+                    (props.loading && (
+                        <div className="KPButton_content-suffix">
+                            {props.loading ? <LoadingOutlined /> : props.suffix}
+                        </div>
+                    ))}
             </div>
         </Button>
     );
