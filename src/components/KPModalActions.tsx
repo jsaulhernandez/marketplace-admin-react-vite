@@ -22,6 +22,7 @@ interface KPModalActionsProps {
     onConfirm?: () => void;
     loading?: boolean;
     typeButton?: TypeButton;
+    textConfirm?: string;
 }
 
 const KPModalActions: FC<KPModalActionsProps> = (props) => {
@@ -57,7 +58,9 @@ const KPModalActions: FC<KPModalActionsProps> = (props) => {
                             onClick={() => props.onConfirm && props.onConfirm()}
                             loading={props.loading}
                         >
-                            Aceptar
+                            {props.textConfirm && props.type === 'confirm'
+                                ? props.textConfirm
+                                : 'Aceptar'}
                         </KPButton>
                     )}
                 </div>
@@ -93,6 +96,7 @@ const WrapperModal = styled(Modal)`
     .KPModalActions_title {
         font-size: 18px;
         font-weight: 700 !important;
+        text-align: center;
     }
 `;
 

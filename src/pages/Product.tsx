@@ -18,7 +18,8 @@ import { ProductModel } from '@interfaces/Product.model';
 
 import { formatMoney } from '@utils/Numbers.utils';
 
-import { SHOWING } from '@constants/Constants.constants';
+import { ModalActionsType, SHOWING, UserActions } from '@constants/Constants.constants';
+import KPModalActions from '@components/KPModalActions';
 
 const Product = () => {
     const [stateProducts, fetchProducts] = useAxios<ProductModel[]>();
@@ -31,6 +32,12 @@ const Product = () => {
     //Form
     const [component, setComponent] = useState<SHOWING>('Table');
     const [data, setData] = useState<ProductModel>();
+    const [action, setAction] = useState<UserActions>();
+
+    //Modal
+    const [open, setOpen] = useState<boolean>(false);
+    const [typeModal, setTypeModal] = useState<ModalActionsType>('confirm');
+    const [textModal, setTextModal] = useState<string>();
 
     useEffect(() => {
         getProducts();
@@ -132,7 +139,11 @@ const Product = () => {
         console.log('onEdit', record);
     };
     const onRemove = (record: ProductModel) => {
-        console.log('onRemove', record);
+        setData(record);
+        setAction('delete');
+        setTextModal('¿Estás seguro de eliminar el registro?');
+        setTypeModal('confirm');
+        setOpen(!open);
     };
 
     const onAddProduct = () => {
@@ -145,48 +156,85 @@ const Product = () => {
         setShowModal(!showModal);
     };
 
-    return component === 'Table' ? (
+    const onConfirm = async () => {
+        if (action === 'save' || action === 'update') {
+            console.log('hola');
+            return;
+        } else {
+            const response = await fetchDelete({
+                method: 'DELETE',
+                path: `/product/${data?.id}`,
+            });
+
+            if (response.isSuccess) {
+                setAction(undefined);
+                setData(undefined);
+                setTextModal('Registro eliminado correctamente');
+                setTypeModal('success');
+                getProducts();
+            } else {
+                setTextModal(`Ocurrio un error al eliminar el producto ${data?.title}`);
+                setTypeModal('error');
+            }
+        }
+    };
+
+    return (
         <>
-            <KPTable
-                rowKey={'id'}
-                scroll={{ x: 600 }}
-                columns={columns}
-                dataSource={stateProducts.data}
-                loading={stateProducts.isLoading || stateDelete.isLoading}
-                pagination={{
-                    current: stateProducts.page?.page,
-                    total: stateProducts.page?.pageCount,
-                    pageSize: stateProducts.page?.size,
-                    onChange: onChangePagination,
-                }}
-                hasPreviousPage={stateProducts.page?.hasPreviousPage}
-                hasNextPage={stateProducts.page?.hasNextPage}
-                filterForm={
-                    <Wrapper className="flex justify-between">
-                        <KPInput
-                            className="Product_input"
-                            addonBefore={<SearchOutlined />}
-                            onChange={onSearch}
-                            placeholder="Buscar....."
-                        />
-                        <KPButton
-                            type="primary"
-                            suffix={<PlusOutlined />}
-                            onClick={onAddProduct}
-                        >
-                            Agregar
-                        </KPButton>
-                    </Wrapper>
-                }
-            />
-            <ModalInformationProduct
-                data={data}
-                open={showModal}
-                onClose={setShowModal}
+            {component === 'Table' ? (
+                <>
+                    <KPTable
+                        rowKey={'id'}
+                        scroll={{ x: 600 }}
+                        columns={columns}
+                        dataSource={stateProducts.data}
+                        loading={stateProducts.isLoading || stateDelete.isLoading}
+                        pagination={{
+                            current: stateProducts.page?.page,
+                            total: stateProducts.page?.pageCount,
+                            pageSize: stateProducts.page?.size,
+                            onChange: onChangePagination,
+                        }}
+                        hasPreviousPage={stateProducts.page?.hasPreviousPage}
+                        hasNextPage={stateProducts.page?.hasNextPage}
+                        filterForm={
+                            <Wrapper className="flex justify-between">
+                                <KPInput
+                                    className="Product_input"
+                                    addonBefore={<SearchOutlined />}
+                                    onChange={onSearch}
+                                    placeholder="Buscar....."
+                                />
+                                <KPButton
+                                    type="primary"
+                                    suffix={<PlusOutlined />}
+                                    onClick={onAddProduct}
+                                >
+                                    Agregar
+                                </KPButton>
+                            </Wrapper>
+                        }
+                    />
+                    <ModalInformationProduct
+                        data={data}
+                        open={showModal}
+                        onClose={setShowModal}
+                    />
+                </>
+            ) : (
+                <ProductForm />
+            )}
+            <KPModalActions
+                open={open}
+                type={typeModal}
+                title={textModal}
+                onClose={setOpen}
+                onConfirm={onConfirm}
+                typeButton="danger"
+                textConfirm="Sí, eliminar"
+                loading={stateDelete.isLoading}
             />
         </>
-    ) : (
-        <ProductForm />
     );
 };
 

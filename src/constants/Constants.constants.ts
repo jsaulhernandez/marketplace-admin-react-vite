@@ -3,3 +3,4 @@ export type SHOWING = 'Form' | 'Table';
 export type NotificationType = 'success' | 'info' | 'warning' | 'error';
 export type ModalActionsType = 'success' | 'error' | 'info' | 'confirm';
 export type TypeButton = 'primary' | 'secondary' | 'link' | 'danger';
+export type UserActions = 'get' | 'save' | 'update' | 'delete';
