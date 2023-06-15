@@ -15,17 +15,32 @@ import KPActions from '@components/KPActions';
 import KPTable from '@components/KPTable';
 import KPInput from '@components/KPInput';
 import KPButton from '@components/KPButton';
+import ColorForm from '@components/color/ColorForm';
+import KPModalActions from '@components/KPModalActions';
 
 import useAxios from '@hooks/useAxios.hook';
 
 import { ColorModel } from '@interfaces/Color.model';
 
+import { ModalActionsType, SHOWING, UserActions } from '@constants/Constants.constants';
+
 const Color = () => {
     const [stateColors, fetchColors] = useAxios<ColorModel[]>();
-    const [stateDelete, fetchDelete] = useAxios<ColorModel>();
+    const [stateSave, fetchSave] = useAxios<ColorModel>();
+    const [stateDelete, fetchDelete] = useAxios<boolean>();
 
     const [filter, setFilter] = useState<string>();
     const [page, setPage] = useState<number>(1);
+
+    //Form
+    const [component, setComponent] = useState<SHOWING>('Table');
+    const [data, setData] = useState<ColorModel>();
+    const [action, setAction] = useState<UserActions>('save');
+
+    //Modal
+    const [open, setOpen] = useState<boolean>(false);
+    const [typeModal, setTypeModal] = useState<ModalActionsType>('confirm');
+    const [textModal, setTextModal] = useState<string>();
 
     useEffect(() => {
         getColors();
@@ -91,7 +106,7 @@ const Color = () => {
             title: 'Acciones',
             render: (_, record: ColorModel) => (
                 <KPActions
-                    onEdit={() => onEdit(record)}
+                    onEdit={() => onAddColor(record, false, 'update')}
                     onRemove={() => onRemove(record)}
                 />
             ),
@@ -111,7 +126,7 @@ const Color = () => {
     const onChangeStatus = async (record: ColorModel, value: boolean) => {
         record.status = value ? 1 : 0;
 
-        const response = await fetchDelete({
+        const response = await fetchSave({
             method: 'PATCH',
             data: record,
             path: `/color/${record.id}`,
@@ -120,43 +135,142 @@ const Color = () => {
         if (response.isSuccess) getColors(page.toString(), filter);
     };
 
-    const onEdit = (record: ColorModel) => {
-        console.log('onEdit', record);
+    const onAddColor = (
+        record?: ColorModel,
+        isSave = false,
+        userAction: UserActions = 'save',
+    ) => {
+        if (!isSave) {
+            setData(record);
+            setComponent('Form');
+            setAction(userAction);
+        } else {
+            if (record) setData({ ...record });
+            setTextModal(
+                `¿En realidad desea ${
+                    action === 'save' ? 'guardar' : 'actualizar'
+                } el color ${record?.value}?`,
+            );
+            setTypeModal('confirm');
+            setOpen(true);
+        }
     };
+
     const onRemove = (record: ColorModel) => {
-        console.log('onRemove', record);
+        setData(record);
+        setAction('delete');
+        setTextModal('¿Estás seguro de eliminar el registro?');
+        setTypeModal('confirm');
+        setOpen(!open);
+    };
+
+    const onConfirm = async () => {
+        if (action === 'save' || action === 'update') {
+            const path = `/color${action === 'update' ? '/' + data?.id : ''}`;
+
+            const response = await fetchSave({
+                method: action === 'save' ? 'POST' : 'PATCH',
+                path,
+                data: data,
+            });
+
+            if (response.isSuccess) {
+                setTextModal(
+                    `Registro ${
+                        action === 'save' ? 'guardado' : 'actualizado'
+                    } correctamente`,
+                );
+                setTypeModal('success');
+
+                setData(undefined);
+                getColors();
+                setComponent('Table');
+            } else {
+                setTextModal(
+                    `Ocurrio un error al ${
+                        action === 'save' ? 'guardar' : 'actualizar'
+                    } el color ${data?.value}`,
+                );
+                setTypeModal('error');
+            }
+        } else {
+            const response = await fetchDelete({
+                method: 'DELETE',
+                path: `/color/${data?.id}`,
+            });
+
+            if (response.isSuccess) {
+                setTextModal('Registro eliminado correctamente');
+                setTypeModal('success');
+
+                setData(undefined);
+                getColors();
+            } else {
+                setTextModal(`Ocurrio un error al eliminar el color ${data?.value}`);
+                setTypeModal('error');
+            }
+        }
     };
 
     return (
-        <KPTable
-            rowKey={'id'}
-            scroll={{ x: 600 }}
-            columns={columns}
-            dataSource={stateColors.data}
-            loading={stateColors.isLoading || stateDelete.isLoading}
-            pagination={{
-                current: stateColors.page?.page,
-                total: stateColors.page?.pageCount,
-                pageSize: stateColors.page?.size,
-                onChange: onChangePagination,
-            }}
-            hasPreviousPage={stateColors.page?.hasPreviousPage}
-            hasNextPage={stateColors.page?.hasNextPage}
-            filterForm={
-                <Wrapper className="flex justify-between">
-                    <KPInput
-                        className="Color_input"
-                        addonBefore={<SearchOutlined />}
-                        onChange={onSearch}
-                        placeholder="Buscar....."
-                        height={40}
-                    />
-                    <KPButton type="primary" suffix={<PlusOutlined />}>
-                        Agregar
-                    </KPButton>
-                </Wrapper>
-            }
-        />
+        <>
+            {component === 'Table' ? (
+                <KPTable
+                    rowKey={'id'}
+                    scroll={{ x: 600 }}
+                    columns={columns}
+                    dataSource={stateColors.data}
+                    loading={stateColors.isLoading || stateDelete.isLoading}
+                    pagination={{
+                        current: stateColors.page?.page,
+                        total: stateColors.page?.pageCount,
+                        pageSize: stateColors.page?.size,
+                        onChange: onChangePagination,
+                    }}
+                    hasPreviousPage={stateColors.page?.hasPreviousPage}
+                    hasNextPage={stateColors.page?.hasNextPage}
+                    filterForm={
+                        <Wrapper className="flex justify-between">
+                            <KPInput
+                                className="Color_input"
+                                addonBefore={<SearchOutlined />}
+                                onChange={onSearch}
+                                placeholder="Buscar....."
+                                height={40}
+                            />
+                            <KPButton
+                                type="primary"
+                                suffix={<PlusOutlined />}
+                                onClick={onAddColor}
+                            >
+                                Agregar
+                            </KPButton>
+                        </Wrapper>
+                    }
+                />
+            ) : (
+                <ColorForm
+                    action={action}
+                    data={data}
+                    onCancel={() => {
+                        setData(undefined);
+                        setComponent('Table');
+                    }}
+                    onSubmit={(value) => onAddColor(value, true)}
+                />
+            )}
+
+            <KPModalActions
+                open={open}
+                type={typeModal}
+                title={textModal}
+                onClose={setOpen}
+                onConfirm={onConfirm}
+                typeButton={action === 'delete' ? 'danger' : undefined}
+                textConfirm={action === 'delete' ? 'Sí, eliminar' : undefined}
+                loading={stateDelete.isLoading || stateSave.isLoading}
+            />
+        </>
     );
 };
 
