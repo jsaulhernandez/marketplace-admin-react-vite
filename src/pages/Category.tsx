@@ -9,17 +9,32 @@ import KPActions from '@components/KPActions';
 import KPTable from '@components/KPTable';
 import KPInput from '@components/KPInput';
 import KPButton from '@components/KPButton';
+import KPModalActions from '@components/KPModalActions';
+import CategoryForm from '@components/category/CategoryForm';
 
 import useAxios from '@hooks/useAxios.hook';
 
 import { CategoryModel } from '@interfaces/Category.model';
 
+import { ModalActionsType, SHOWING, UserActions } from '@constants/Constants.constants';
+
 const Category = () => {
     const [stateCategories, fetchCategories] = useAxios<CategoryModel[]>();
-    const [stateDelete, fetchDelete] = useAxios<CategoryModel>();
+    const [stateSave, fetchSave] = useAxios<CategoryModel>();
+    const [stateDelete, fetchDelete] = useAxios<boolean>();
 
     const [filter, setFilter] = useState<string>();
     const [page, setPage] = useState<number>(1);
+
+    //Form
+    const [component, setComponent] = useState<SHOWING>('Table');
+    const [data, setData] = useState<CategoryModel>();
+    const [action, setAction] = useState<UserActions>('save');
+
+    //Modal
+    const [open, setOpen] = useState<boolean>(false);
+    const [typeModal, setTypeModal] = useState<ModalActionsType>('confirm');
+    const [textModal, setTextModal] = useState<string>();
 
     useEffect(() => {
         getCategories();
@@ -57,7 +72,7 @@ const Category = () => {
             title: 'Acciones',
             render: (_, record: CategoryModel) => (
                 <KPActions
-                    onEdit={() => onEdit(record)}
+                    onEdit={() => onAddCategory(record, false, 'update')}
                     onRemove={() => onRemove(record)}
                 />
             ),
@@ -77,7 +92,7 @@ const Category = () => {
     const onChangeStatus = async (record: CategoryModel, value: boolean) => {
         record.status = value ? 1 : 0;
 
-        const response = await fetchDelete({
+        const response = await fetchSave({
             method: 'PATCH',
             data: record,
             path: `/category/${record.id}`,
@@ -86,42 +101,141 @@ const Category = () => {
         if (response.isSuccess) getCategories(page.toString(), filter);
     };
 
-    const onEdit = (record: CategoryModel) => {
-        console.log('onEdit', record);
+    const onAddCategory = (
+        record?: CategoryModel,
+        isSave = false,
+        userAction: UserActions = 'save',
+    ) => {
+        if (!isSave) {
+            setData(record);
+            setComponent('Form');
+            setAction(userAction);
+        } else {
+            if (record) setData({ ...record });
+            setTextModal(
+                `¿En realidad desea ${
+                    action === 'save' ? 'guardar' : 'actualizar'
+                } la categoría ${record?.name}?`,
+            );
+            setTypeModal('confirm');
+            setOpen(true);
+        }
     };
+
     const onRemove = (record: CategoryModel) => {
-        console.log('onRemove', record);
+        setData(record);
+        setAction('delete');
+        setTextModal('¿Estás seguro de eliminar el registro?');
+        setTypeModal('confirm');
+        setOpen(!open);
+    };
+
+    const onConfirm = async () => {
+        if (action === 'save' || action === 'update') {
+            const path = `/product${action === 'update' ? '/' + data?.id : ''}`;
+
+            const response = await fetchSave({
+                method: action === 'save' ? 'POST' : 'PATCH',
+                path,
+                data: data,
+            });
+
+            if (response.isSuccess) {
+                setTextModal(
+                    `Registro ${
+                        action === 'save' ? 'guardado' : 'actualizado'
+                    } correctamente`,
+                );
+                setTypeModal('success');
+
+                setData(undefined);
+                getCategories();
+            } else {
+                setTextModal(
+                    `Ocurrio un error al ${
+                        action === 'save' ? 'guardar' : 'actualizar'
+                    } la categoría ${data?.name}`,
+                );
+                setTypeModal('error');
+            }
+        } else {
+            const response = await fetchDelete({
+                method: 'DELETE',
+                path: `/product/${data?.id}`,
+            });
+
+            if (response.isSuccess) {
+                setTextModal('Registro eliminado correctamente');
+                setTypeModal('success');
+
+                setData(undefined);
+                getCategories();
+            } else {
+                setTextModal(`Ocurrio un error al eliminar la categoría ${data?.name}`);
+                setTypeModal('error');
+            }
+        }
     };
 
     return (
-        <KPTable
-            rowKey={'id'}
-            scroll={{ x: 600 }}
-            columns={columns}
-            dataSource={stateCategories.data}
-            loading={stateCategories.isLoading || stateDelete.isLoading}
-            pagination={{
-                current: stateCategories.page?.page,
-                total: stateCategories.page?.pageCount,
-                pageSize: stateCategories.page?.size,
-                onChange: onChangePagination,
-            }}
-            hasPreviousPage={stateCategories.page?.hasPreviousPage}
-            hasNextPage={stateCategories.page?.hasNextPage}
-            filterForm={
-                <Wrapper className="flex justify-between">
-                    <KPInput
-                        className="Category_input"
-                        addonBefore={<SearchOutlined />}
-                        onChange={onSearch}
-                        placeholder="Buscar....."
-                    />
-                    <KPButton type="primary" suffix={<PlusOutlined />}>
-                        Agregar
-                    </KPButton>
-                </Wrapper>
-            }
-        />
+        <>
+            {component === 'Table' ? (
+                <KPTable
+                    rowKey={'id'}
+                    scroll={{ x: 600 }}
+                    columns={columns}
+                    dataSource={stateCategories.data}
+                    loading={stateCategories.isLoading || stateDelete.isLoading}
+                    pagination={{
+                        current: stateCategories.page?.page,
+                        total: stateCategories.page?.pageCount,
+                        pageSize: stateCategories.page?.size,
+                        onChange: onChangePagination,
+                    }}
+                    hasPreviousPage={stateCategories.page?.hasPreviousPage}
+                    hasNextPage={stateCategories.page?.hasNextPage}
+                    filterForm={
+                        <Wrapper className="flex justify-between">
+                            <KPInput
+                                className="Category_input"
+                                addonBefore={<SearchOutlined />}
+                                onChange={onSearch}
+                                placeholder="Buscar....."
+                                height={40}
+                            />
+                            <KPButton
+                                type="primary"
+                                suffix={<PlusOutlined />}
+                                onClick={onAddCategory}
+                            >
+                                Agregar
+                            </KPButton>
+                        </Wrapper>
+                    }
+                />
+            ) : (
+                <CategoryForm
+                    action={action}
+                    data={data}
+                    onCancel={() => {
+                        setData(undefined);
+                        setComponent('Table');
+                    }}
+                    onSubmit={(value) => onAddCategory(value, true)}
+                />
+            )}
+
+            <KPModalActions
+                open={open}
+                type={typeModal}
+                title={textModal}
+                onClose={setOpen}
+                onConfirm={onConfirm}
+                typeButton="danger"
+                textConfirm="Sí, eliminar"
+                loading={stateDelete.isLoading || stateSave.isLoading}
+            />
+        </>
     );
 };
 

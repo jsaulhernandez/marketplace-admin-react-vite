@@ -115,6 +115,7 @@ const Processor = () => {
                         addonBefore={<SearchOutlined />}
                         onChange={onSearch}
                         placeholder="Buscar....."
+                        height={40}
                     />
                     <KPButton type="primary" suffix={<PlusOutlined />}>
                         Agregar

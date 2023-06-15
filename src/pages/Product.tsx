@@ -23,7 +23,8 @@ import KPModalActions from '@components/KPModalActions';
 
 const Product = () => {
     const [stateProducts, fetchProducts] = useAxios<ProductModel[]>();
-    const [stateDelete, fetchDelete] = useAxios<ProductModel>();
+    const [stateSave, fetchSave] = useAxios<ProductModel>();
+    const [stateDelete, fetchDelete] = useAxios<boolean>();
 
     const [filter, setFilter] = useState<string>();
     const [page, setPage] = useState<number>(1);
@@ -126,7 +127,7 @@ const Product = () => {
     const onChangeStatus = async (record: ProductModel, value: boolean) => {
         record.status = value ? 1 : 0;
 
-        const response = await fetchDelete({
+        const response = await fetchSave({
             method: 'PATCH',
             data: record,
             path: `/product/${record.id}`,
@@ -157,7 +158,7 @@ const Product = () => {
         if (action === 'save' || action === 'update') {
             const path = `/product${action === 'update' ? '/' + data?.id : ''}`;
 
-            const response = await fetchDelete({
+            const response = await fetchSave({
                 method: action === 'save' ? 'POST' : 'PATCH',
                 path,
                 data: data,
@@ -227,6 +228,7 @@ const Product = () => {
                                     addonBefore={<SearchOutlined />}
                                     onChange={onSearch}
                                     placeholder="Buscar....."
+                                    height={40}
                                 />
                                 <KPButton
                                     type="primary"
@@ -247,6 +249,7 @@ const Product = () => {
             ) : (
                 <ProductForm />
             )}
+
             <KPModalActions
                 open={open}
                 type={typeModal}
@@ -255,7 +258,7 @@ const Product = () => {
                 onConfirm={onConfirm}
                 typeButton="danger"
                 textConfirm="Sí, eliminar"
-                loading={stateDelete.isLoading}
+                loading={stateDelete.isLoading || stateSave.isLoading}
             />
         </>
     );
