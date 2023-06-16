@@ -14,8 +14,8 @@ import Product from '@pages/Product';
 import Category from '@pages/Category';
 import Color from '@pages/Color';
 import MemorySize from '@pages/MemorySize';
-import PayMethod from '@pages/PayMethod';
 import Processor from '@pages/Processor';
+import PaymentMethod from '@pages/PaymentMethod';
 
 const RoutesList = [
     {
@@ -38,7 +38,7 @@ const RoutesList = [
     },
     {
         path: '/pay-method',
-        element: <PayMethod />,
+        element: <PaymentMethod />,
         title: 'Metodos de pagos',
         icon: <PayCircleOutlined />,
     },
