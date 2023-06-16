@@ -44,7 +44,7 @@ const PaymentMethod = () => {
     const getPaymentMethods = (page = '1', filter = '') => {
         fetchPayMethod({
             method: 'GET',
-            path: '/pay-method',
+            path: '/payment-method',
             queries: {
                 page,
                 filter,
@@ -95,7 +95,7 @@ const PaymentMethod = () => {
         const response = await fetchSave({
             method: 'PATCH',
             data: record,
-            path: `/pay-method/${record.id}`,
+            path: `/payment-method/${record.id}`,
         });
 
         if (response.isSuccess) getPaymentMethods(page.toString(), filter);
@@ -132,7 +132,7 @@ const PaymentMethod = () => {
 
     const onConfirm = async () => {
         if (action === 'save' || action === 'update') {
-            const path = `/pay-method${action === 'update' ? '/' + data?.id : ''}`;
+            const path = `/payment-method${action === 'update' ? '/' + data?.id : ''}`;
 
             const response = await fetchSave({
                 method: action === 'save' ? 'POST' : 'PATCH',
@@ -162,7 +162,7 @@ const PaymentMethod = () => {
         } else {
             const response = await fetchDelete({
                 method: 'DELETE',
-                path: `/pay-method/${data?.id}`,
+                path: `/payment-method/${data?.id}`,
             });
 
             if (response.isSuccess) {
