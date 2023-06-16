@@ -1,5 +1,5 @@
 export interface ProcessorModel {
-    id: number;
+    id?: number;
     name: string;
-    status: number;
+    status: number | string;
 }
