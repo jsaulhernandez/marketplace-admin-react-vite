@@ -18,5 +18,5 @@ export interface ProductModel {
     color: ColorModel[];
     processor: ProcessorModel[];
     category: CategoryModel;
-    payMethod: PaymentMethodModel[];
+    paymentMethod: PaymentMethodModel[];
 }

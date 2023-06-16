@@ -1,5 +1,5 @@
 export interface MemorySizeModel {
     id?: number;
-    value: string;
-    status: number | string;
+    value?: string;
+    status?: number | string;
 }
