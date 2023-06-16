@@ -5,13 +5,13 @@ import { PaymentMethodModel } from './PaymentMethod.model';
 import { ProcessorModel } from './Processor.model';
 
 export interface ProductModel {
-    id: number;
+    id?: number;
     name: string;
     title: string;
     image: string;
     stock: number;
     price: number;
-    status: number;
+    status: number | string;
     detail: string;
     specification: string;
     memorySize: MemorySizeModel[];

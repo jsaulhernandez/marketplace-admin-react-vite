@@ -11,6 +11,7 @@ import KPInput from '@components/KPInput';
 import KPButton from '@components/KPButton';
 import ProductForm from '@components/product/ProductForm';
 import ModalInformationProduct from '@components/product/ModalInformationProduct';
+import KPModalActions from '@components/KPModalActions';
 
 import useAxios from '@hooks/useAxios.hook';
 
@@ -19,7 +20,6 @@ import { ProductModel } from '@interfaces/Product.model';
 import { formatMoney } from '@utils/Numbers.utils';
 
 import { ModalActionsType, SHOWING, UserActions } from '@constants/Constants.constants';
-import KPModalActions from '@components/KPModalActions';
 
 const Product = () => {
     const [stateProducts, fetchProducts] = useAxios<ProductModel[]>();
@@ -33,7 +33,7 @@ const Product = () => {
     //Form
     const [component, setComponent] = useState<SHOWING>('Table');
     const [data, setData] = useState<ProductModel>();
-    const [action, setAction] = useState<UserActions>();
+    const [action, setAction] = useState<UserActions>('save');
 
     //Modal
     const [open, setOpen] = useState<boolean>(false);
@@ -107,7 +107,7 @@ const Product = () => {
             title: 'Acciones',
             render: (_, record: ProductModel) => (
                 <KPActions
-                    onEdit={() => onAddProduct(record)}
+                    onEdit={() => onAddProduct(record, false, 'update')}
                     onRemove={() => onRemove(record)}
                 />
             ),
@@ -136,9 +136,25 @@ const Product = () => {
         if (response.isSuccess) getProducts(page.toString(), filter);
     };
 
-    const onAddProduct = (record?: ProductModel) => {
-        setData(record);
-        setComponent('Form');
+    const onAddProduct = (
+        record?: ProductModel,
+        isSave = false,
+        userAction: UserActions = 'save',
+    ) => {
+        if (!isSave) {
+            setData(record);
+            setComponent('Form');
+            setAction(userAction);
+        } else {
+            if (record) setData({ ...record });
+            setTextModal(
+                `¿En realidad desea ${
+                    action === 'save' ? 'guardar' : 'actualizar'
+                } el producto ${record?.title}?`,
+            );
+            setTypeModal('confirm');
+            setOpen(true);
+        }
     };
 
     const onRemove = (record: ProductModel) => {
@@ -172,9 +188,9 @@ const Product = () => {
                 );
                 setTypeModal('success');
 
-                setAction(undefined);
                 setData(undefined);
                 getProducts();
+                setComponent('Table');
             } else {
                 setTextModal(
                     `Ocurrio un error al ${
@@ -193,7 +209,6 @@ const Product = () => {
                 setTextModal('Registro eliminado correctamente');
                 setTypeModal('success');
 
-                setAction(undefined);
                 setData(undefined);
                 getProducts();
             } else {
@@ -247,7 +262,15 @@ const Product = () => {
                     />
                 </>
             ) : (
-                <ProductForm />
+                <ProductForm
+                    action={action}
+                    data={data}
+                    onCancel={() => {
+                        setData(undefined);
+                        setComponent('Table');
+                    }}
+                    onSubmit={(value) => onAddProduct(value, true)}
+                />
             )}
 
             <KPModalActions
@@ -256,8 +279,8 @@ const Product = () => {
                 title={textModal}
                 onClose={setOpen}
                 onConfirm={onConfirm}
-                typeButton="danger"
-                textConfirm="Sí, eliminar"
+                typeButton={action === 'delete' ? 'danger' : undefined}
+                textConfirm={action === 'delete' ? 'Sí, eliminar' : undefined}
                 loading={stateDelete.isLoading || stateSave.isLoading}
             />
         </>
