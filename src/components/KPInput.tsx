@@ -41,6 +41,7 @@ const KPInput: FC<KPInputProps> = (props) => {
                 className={`${className ? className : ''}`}
                 allowClear={false}
                 {...rest}
+                style={{ minHeight: 100 }}
             />
         );
 
