@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { Modal, Tag } from 'antd';
 
 import KPText from '@components/KPText';
@@ -15,6 +15,14 @@ interface ModalInformationProductProps {
 }
 
 const ModalInformationProduct: FC<ModalInformationProductProps> = (props) => {
+    const spanRef = useRef<HTMLSpanElement>(null);
+
+    useEffect(() => {
+        if (spanRef.current)
+            if (props.data?.specification)
+                spanRef.current.innerHTML = props.data.specification;
+    }, [props.data?.specification]);
+
     return (
         <WrapperModal
             title={
@@ -42,7 +50,7 @@ const ModalInformationProduct: FC<ModalInformationProductProps> = (props) => {
                 {props.data?.specification && (
                     <div className="ModalInformationProduct_item flex flex-column">
                         <KPText text="Especificaciones" fontWeight={700} />
-                        <KPText text={props.data?.specification ?? ''} />
+                        <span className="specification" ref={spanRef} />
                     </div>
                 )}
 
@@ -89,11 +97,11 @@ const ModalInformationProduct: FC<ModalInformationProductProps> = (props) => {
                     </div>
                 )}
 
-                {props.data?.payMethod && props.data.payMethod.length > 0 && (
+                {props.data?.paymentMethod && props.data.paymentMethod.length > 0 && (
                     <div className="ModalInformationProduct_item flex flex-column">
                         <KPText text="Formas de pago" fontWeight={700} />
                         <div className="flex flex-row flex-wrap g-10">
-                            {props.data?.payMethod.map((p, i) => (
+                            {props.data?.paymentMethod.map((p, i) => (
                                 <Tag className="tag mt-1" key={i}>
                                     <KPText text={p.name} textColor="--secondary-color" />
                                 </Tag>
@@ -123,6 +131,24 @@ const WrapperModal = styled(Modal)`
 
     .ModalInformationProduct_body {
         padding: 20px 24px;
+
+        .specification {
+            color: var(--secondary-text-color);
+            font-size: 14px;
+            font-weight: normal !important;
+            letter-spacing: 0px;
+            margin: 0px;
+            text-decoration: none;
+            text-align: left;
+
+            p strong {
+                text-decoration: underline;
+            }
+
+            ul {
+                padding-left: 30px;
+            }
+        }
     }
 
     .tag {
