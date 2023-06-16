@@ -439,5 +439,40 @@ label.ant-radio-button-wrapper > span:nth-child(2) {
         .ant-select-customize-input
     )
     .ant-select-selector {
-    height: 40px;
+    min-height: 40px;
+}
+
+:where(.css-dev-only-do-not-override-12jzuas).ant-select.ant-select-in-form-item {
+    min-height: 40px;
+}
+
+:where(.css-dev-only-do-not-override-12jzuas).ant-select-multiple.ant-select-show-arrow
+    .ant-select-selector,
+:where(.css-dev-only-do-not-override-12jzuas).ant-select-multiple.ant-select-allow-clear
+    .ant-select-selector {
+    min-height: 40px;
+}
+
+:where(.css-dev-only-do-not-override-12jzuas).ant-select-dropdown
+    .ant-select-item-option-content
+    > .color-item,
+.ant-select-selection-item > .ant-select-selection-item-content > .color-item {
+    color: var(--secondary-color);
+    border-radius: 6px;
+    width: auto;
+}
+
+:where(.css-dev-only-do-not-override-12jzuas).ant-select-dropdown
+    .ant-select-item-option-content
+    > .color-item {
+    color: var(--secondary-color);
+    padding: 5px;
+    border-radius: 6px;
+    font-weight: 700 !important;
+    width: auto;
+}
+
+.ant-select-selection-item > .ant-select-selection-item-content > .color-item {
+    padding: 0 5px;
+    font-weight: normal !important;
 }
