@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-types */
+type generic = { [k in string]: PropertyKey };
 
-type generic = { [k in string]: string };
-
-export interface CustomHeader<T extends Object> {
+export interface CustomHeader<T extends generic> {
     title: string;
     dataKey: string;
     render?: (record: T, index: number) => string;
