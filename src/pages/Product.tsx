@@ -2,7 +2,12 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import { Switch } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import { EyeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+    EyeOutlined,
+    FileExcelOutlined,
+    PlusOutlined,
+    SearchOutlined,
+} from '@ant-design/icons';
 import styled from 'styled-components';
 
 import KPActions from '@components/KPActions';
@@ -18,6 +23,8 @@ import useAxios from '@hooks/useAxios.hook';
 import { ProductModel } from '@interfaces/Product.model';
 
 import { formatMoney } from '@utils/Numbers.utils';
+import { CustomHeader, getDataFormatByHeaders } from '@utils/Object.utils';
+import { exportToExcel } from '@utils/File.utils';
 
 import { ModalActionsType, SHOWING, UserActions } from '@constants/Constants.constants';
 
@@ -111,6 +118,33 @@ const Product = () => {
                     onRemove={() => onRemove(record)}
                 />
             ),
+        },
+    ];
+
+    const dataHeader: CustomHeader<ProductModel>[] = [
+        {
+            title: 'Titulo',
+            dataKey: 'title',
+        },
+        {
+            title: 'Nombre',
+            dataKey: 'name',
+        },
+        {
+            title: 'Disponible',
+            render: (record) => `${record.stock} unidades`,
+        },
+        {
+            title: 'Precio',
+            render: (record) => `${formatMoney(record.price)}`,
+        },
+        {
+            title: 'Categoría',
+            render: (record) => record.category.name ?? '',
+        },
+        {
+            title: 'Estado',
+            render: (record) => (record.status === 1 ? 'Activo' : 'Inactivo'),
         },
     ];
 
@@ -218,6 +252,11 @@ const Product = () => {
         }
     };
 
+    const generateExcel = () => {
+        const customData = getDataFormatByHeaders(dataHeader, stateProducts.data ?? []);
+        exportToExcel(customData, 'Reporte de productos');
+    };
+
     return (
         <>
             {component === 'Table' ? (
@@ -237,21 +276,32 @@ const Product = () => {
                         hasPreviousPage={stateProducts.page?.hasPreviousPage}
                         hasNextPage={stateProducts.page?.hasNextPage}
                         filterForm={
-                            <Wrapper className="flex justify-between">
-                                <KPInput
-                                    className="Product_input"
-                                    addonBefore={<SearchOutlined />}
-                                    onChange={onSearch}
-                                    placeholder="Buscar....."
-                                    height={40}
-                                />
-                                <KPButton
-                                    type="primary"
-                                    suffix={<PlusOutlined />}
-                                    onClick={onAddProduct}
-                                >
-                                    Agregar
-                                </KPButton>
+                            <Wrapper className="flex flex-column g-10">
+                                <div className="flex justify-between">
+                                    <KPInput
+                                        className="Product_input"
+                                        addonBefore={<SearchOutlined />}
+                                        onChange={onSearch}
+                                        placeholder="Buscar....."
+                                        height={40}
+                                    />
+                                    <KPButton
+                                        type="primary"
+                                        suffix={<PlusOutlined />}
+                                        onClick={onAddProduct}
+                                    >
+                                        Agregar
+                                    </KPButton>
+                                </div>
+                                <div className="flex justify-end">
+                                    <KPButton
+                                        type="link"
+                                        suffix={<FileExcelOutlined />}
+                                        onClick={generateExcel}
+                                    >
+                                        Exportar
+                                    </KPButton>
+                                </div>
                             </Wrapper>
                         }
                     />
