@@ -1,12 +1,22 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import { Form, Radio, Select } from 'antd';
 import styled from 'styled-components';
 
 import KPInput from '@components/KPInput';
 import KPButton from '@components/KPButton';
+import KPEditor from '@components/KPEditor';
 
+import useAxios from '@hooks/useAxios.hook';
+
+import { CategoryModel } from '@interfaces/Category.model';
+import { ColorModel } from '@interfaces/Color.model';
+import { MemorySizeModel } from '@interfaces/MemorySize.model';
+import { PaymentMethodModel } from '@interfaces/PaymentMethod.model';
 import { ProductModel } from '@interfaces/Product.model';
+import { ProcessorModel } from '@interfaces/Processor.model';
+
+import { validateDecimalNumbers, validateNumbers } from '@utils/Validator.utils';
 
 import { UserActions } from '@constants/Constants.constants';
 
@@ -20,12 +30,168 @@ interface ProductFormProps {
 const ProductForm: FC<ProductFormProps> = (props) => {
     const [form] = Form.useForm<ProductModel>();
 
+    const [stateCategories, fetchCategories] = useAxios<CategoryModel[]>();
+    const [stateColors, fetchColors] = useAxios<ColorModel[]>();
+    const [stateMemorySizes, fetchMemorySizes] = useAxios<MemorySizeModel[]>();
+    const [statePaymentMethods, fetchPaymentMethods] = useAxios<PaymentMethodModel[]>();
+    const [stateProcessors, fetchProcessors] = useAxios<CategoryModel[]>();
+
+    const [colors, setColors] = useState<string[]>([]);
+    const [memorySizes, setMemorySizes] = useState<string[]>([]);
+    const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
+    const [processors, setProcessors] = useState<string[]>([]);
+
+    const [textEditor, setTextEditor] = useState<string>(props.data?.specification ?? '');
+    const [requiredTextEditor, setRequiredTextEditor] = useState<boolean>(false);
+
+    useEffect(() => {
+        fetchCategories('/category/active');
+        fetchColors('/color/active');
+        fetchMemorySizes('/memory-size/active');
+        fetchPaymentMethods('/payment-method/active');
+        fetchProcessors('/processor/active');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        form.setFieldValue('memorySize', []);
+        if (stateMemorySizes.isSuccess && stateMemorySizes.data) {
+            const memorySizesData =
+                props.data?.memorySize
+                    .filter((m) => {
+                        return stateMemorySizes.data?.find((mz) => mz.id === m.id);
+                    })
+                    .map((m) => {
+                        return m.id + '';
+                    }) ?? [];
+
+            setMemorySizes(memorySizesData);
+            form.setFieldValue('memorySize', memorySizesData);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stateMemorySizes.isSuccess]);
+
+    useEffect(() => {
+        form.setFieldValue('processor', []);
+        if (stateProcessors.isSuccess && stateProcessors.data) {
+            const processorsData =
+                props.data?.processor
+                    .filter((p) => {
+                        return stateProcessors.data?.find((pc) => pc.id === p.id);
+                    })
+                    .map((p) => {
+                        return p.id + '';
+                    }) ?? [];
+
+            setProcessors(processorsData);
+            form.setFieldValue('processor', processorsData);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stateProcessors.isSuccess]);
+
+    useEffect(() => {
+        form.setFieldValue('color', []);
+        if (stateColors.isSuccess && stateColors.data) {
+            const colorsData =
+                props.data?.color
+                    .filter((c) => {
+                        return stateColors.data?.find((cl) => cl.id === c.id);
+                    })
+                    .map((c) => {
+                        return c.id + '';
+                    }) ?? [];
+
+            setColors(colorsData);
+            form.setFieldValue('color', colorsData);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stateColors.isSuccess]);
+
+    useEffect(() => {
+        form.setFieldValue('paymentMethod', []);
+        if (statePaymentMethods.isSuccess && statePaymentMethods.data) {
+            const paymentMethodsData =
+                props.data?.paymentMethod
+                    .filter((c) => {
+                        return statePaymentMethods.data?.find((cl) => cl.id === c.id);
+                    })
+                    .map((c) => {
+                        return c.id + '';
+                    }) ?? [];
+
+            setPaymentMethods(paymentMethodsData);
+            form.setFieldValue('paymentMethod', paymentMethodsData);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [statePaymentMethods.isSuccess]);
+
     const onFinish = (values: ProductModel) => {
+        if (
+            !textEditor ||
+            (typeof textEditor === 'string' &&
+                (textEditor.length === 0 || textEditor === '<p><br></p>'))
+        ) {
+            setRequiredTextEditor(true);
+            return;
+        }
+
+        const colorsData: ColorModel[] =
+            stateColors.data
+                ?.filter((c) => {
+                    return colors.find((cl) => +cl === c.id);
+                })
+                .map((x) => {
+                    return { id: x.id };
+                }) ?? [];
+
+        const memorySizesData: MemorySizeModel[] =
+            stateMemorySizes.data
+                ?.filter((m) => {
+                    return memorySizes.find((ms) => +ms === m.id);
+                })
+                .map((x) => {
+                    return { id: x.id };
+                }) ?? [];
+
+        const paymentMethodsData: PaymentMethodModel[] =
+            statePaymentMethods.data
+                ?.filter((p) => {
+                    return paymentMethods.find((pm) => +pm === p.id);
+                })
+                .map((x) => {
+                    return { id: x.id };
+                }) ?? [];
+
+        const processorsData: ProcessorModel[] =
+            stateProcessors.data
+                ?.filter((p) => {
+                    return processors.find((pc) => +pc === p.id);
+                })
+                .map((x) => {
+                    return { id: x.id };
+                }) ?? [];
+
         props.onSubmit({
             ...values,
             id: props.data?.id,
             status: values.status === 'ACTIVO' ? 1 : 0,
+            specification: textEditor,
+            color: colorsData,
+            memorySize: memorySizesData,
+            paymentMethod: paymentMethodsData,
+            processor: processorsData,
         });
+    };
+
+    const onFinishFailed = () => {
+        if (
+            !textEditor ||
+            (typeof textEditor === 'string' &&
+                (textEditor.length === 0 || textEditor === '<p><br></p>'))
+        ) {
+            setRequiredTextEditor(true);
+            return;
+        }
     };
 
     return (
@@ -33,6 +199,7 @@ const ProductForm: FC<ProductFormProps> = (props) => {
             <Form
                 form={form}
                 onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
                 autoComplete="off"
                 initialValues={
                     props.action === 'save'
@@ -40,6 +207,7 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                         : {
                               ...props.data,
                               status: props.data?.status === 1 ? 'ACTIVO' : 'INACTIVO',
+                              category: { id: props.data?.category.id?.toString() },
                           }
                 }
             >
@@ -85,6 +253,9 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                             name="stock"
                             rules={[
                                 { required: true, message: 'Este campo es requerido' },
+                                {
+                                    validator: (_, value) => validateNumbers(value),
+                                },
                             ]}
                         >
                             <KPInput />
@@ -100,9 +271,13 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                             name="price"
                             rules={[
                                 { required: true, message: 'Este campo es requerido' },
+                                {
+                                    validator: (_, value) =>
+                                        validateDecimalNumbers(value),
+                                },
                             ]}
                         >
-                            <KPInput />
+                            <KPInput placeholder="$0.00" />
                         </Form.Item>
                     </div>
                 </div>
@@ -119,8 +294,10 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                                 { required: true, message: 'Este campo es requerido' },
                             ]}
                         >
-                            <Select>
-                                <Select.Option key={'2'}>Categories</Select.Option>
+                            <Select loading={stateCategories.isLoading}>
+                                {stateCategories.data?.map((c) => (
+                                    <Select.Option key={c.id}>{c.name}</Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </div>
@@ -151,13 +328,20 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                         </label>
                         <Form.Item
                             hasFeedback
-                            name={['memorySize', 'id']}
+                            name="memorySize"
                             rules={[
                                 { required: true, message: 'Este campo es requerido' },
                             ]}
                         >
-                            <Select>
-                                <Select.Option key={'2'}>Mmeory sizes</Select.Option>
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                loading={stateMemorySizes.isLoading}
+                                onChange={setMemorySizes}
+                            >
+                                {stateMemorySizes.data?.map((m) => (
+                                    <Select.Option key={m.id}>{m.value}</Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </div>
@@ -168,13 +352,20 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                         </label>
                         <Form.Item
                             hasFeedback
-                            name={['processor', 'id']}
+                            name="processor"
                             rules={[
                                 { required: true, message: 'Este campo es requerido' },
                             ]}
                         >
-                            <Select>
-                                <Select.Option key={'2'}>processors</Select.Option>
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                loading={stateProcessors.isLoading}
+                                onChange={setProcessors}
+                            >
+                                {stateProcessors.data?.map((p) => (
+                                    <Select.Option key={p.id}>{p.name}</Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </div>
@@ -186,14 +377,30 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                             Colores<span>*</span>
                         </label>
                         <Form.Item
+                            name="color"
                             hasFeedback
-                            name={['color', 'id']}
                             rules={[
                                 { required: true, message: 'Este campo es requerido' },
                             ]}
                         >
-                            <Select>
-                                <Select.Option key={'2'}>Colors</Select.Option>
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                loading={stateColors.isLoading}
+                                onChange={setColors}
+                            >
+                                {stateColors.data?.map((c) => (
+                                    <Select.Option key={c.id}>
+                                        <div
+                                            style={{
+                                                background: c.value,
+                                            }}
+                                            className="color-item"
+                                        >
+                                            {c.value}
+                                        </div>
+                                    </Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </div>
@@ -203,14 +410,21 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                             Metodos de pago<span>*</span>
                         </label>
                         <Form.Item
+                            name="paymentMethod"
                             hasFeedback
-                            name={['payMethod', 'id']}
                             rules={[
                                 { required: true, message: 'Este campo es requerido' },
                             ]}
                         >
-                            <Select>
-                                <Select.Option key={'2'}>payMethod</Select.Option>
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                loading={statePaymentMethods.isLoading}
+                                onChange={setPaymentMethods}
+                            >
+                                {statePaymentMethods.data?.map((x) => (
+                                    <Select.Option key={x.id}>{x.name}</Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </div>
@@ -233,13 +447,12 @@ const ProductForm: FC<ProductFormProps> = (props) => {
                     <label htmlFor="specification">
                         Especificaciones<span>*</span>
                     </label>
-                    <Form.Item
-                        hasFeedback
-                        name="specification"
-                        rules={[{ required: true, message: 'Este campo es requerido' }]}
-                    >
-                        <KPInput typeInput="textarea" />
-                    </Form.Item>
+                    <KPEditor
+                        value={textEditor}
+                        onSetValue={setTextEditor}
+                        required={requiredTextEditor}
+                        onSetRequired={setRequiredTextEditor}
+                    />
                 </div>
 
                 <div className="flex justify-center items-center g-20">
