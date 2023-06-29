@@ -6,6 +6,7 @@ import {
     FilterOutlined,
     LaptopOutlined,
     PayCircleOutlined,
+    UserAddOutlined,
 } from '@ant-design/icons';
 
 import { Navigate } from 'react-router-dom';
@@ -18,6 +19,7 @@ import MemorySize from '@pages/MemorySize';
 import Processor from '@pages/Processor';
 import PaymentMethod from '@pages/PaymentMethod';
 import TypeDocument from '@pages/TypeDocument';
+import Customer from '@pages/Customer';
 
 const RoutesList = [
     {
@@ -61,6 +63,12 @@ const RoutesList = [
         element: <TypeDocument />,
         title: 'Tipos de documentos',
         icon: <FileOutlined />,
+    },
+    {
+        path: '/customer',
+        element: <Customer />,
+        title: 'Clientes',
+        icon: <UserAddOutlined />,
     },
 ];
 
