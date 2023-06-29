@@ -277,14 +277,7 @@ const Product = () => {
                         hasNextPage={stateProducts.page?.hasNextPage}
                         filterForm={
                             <Wrapper className="flex flex-column g-10">
-                                <div className="flex justify-between">
-                                    <KPInput
-                                        className="Product_input"
-                                        addonBefore={<SearchOutlined />}
-                                        onChange={onSearch}
-                                        placeholder="Buscar....."
-                                        height={40}
-                                    />
+                                <div className="flex justify-end">
                                     <KPButton
                                         type="primary"
                                         suffix={<PlusOutlined />}
@@ -293,7 +286,14 @@ const Product = () => {
                                         Agregar
                                     </KPButton>
                                 </div>
-                                <div className="flex justify-end">
+                                <div className="flex justify-between">
+                                    <KPInput
+                                        className="Product_input"
+                                        addonBefore={<SearchOutlined />}
+                                        onChange={onSearch}
+                                        placeholder="Buscar....."
+                                        height={40}
+                                    />
                                     <KPButton
                                         type="link"
                                         suffix={<FileExcelOutlined />}
