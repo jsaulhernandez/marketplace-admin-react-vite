@@ -2,6 +2,7 @@ import {
     AndroidOutlined,
     ContainerOutlined,
     EyeOutlined,
+    FileOutlined,
     FilterOutlined,
     LaptopOutlined,
     PayCircleOutlined,
@@ -16,6 +17,7 @@ import Color from '@pages/Color';
 import MemorySize from '@pages/MemorySize';
 import Processor from '@pages/Processor';
 import PaymentMethod from '@pages/PaymentMethod';
+import TypeDocument from '@pages/TypeDocument';
 
 const RoutesList = [
     {
@@ -53,6 +55,12 @@ const RoutesList = [
         element: <Product />,
         title: 'Productos',
         icon: <ContainerOutlined />,
+    },
+    {
+        path: '/type-document',
+        element: <TypeDocument />,
+        title: 'Tipos de documentos',
+        icon: <FileOutlined />,
     },
 ];
 
