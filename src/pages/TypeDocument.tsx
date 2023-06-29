@@ -41,13 +41,13 @@ const TypeDocument = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const getTypesDocuments = (page = '1', filter = '') => {
+    const getTypesDocuments = (page = '1', search = '') => {
         fetchTypesDocuments({
             method: 'GET',
             path: '/type-document',
             queries: {
                 page,
-                filter,
+                search,
                 size: '10',
             },
         });
@@ -119,7 +119,7 @@ const TypeDocument = () => {
             setTextModal(
                 `¿En realidad desea ${
                     action === 'save' ? 'guardar' : 'actualizar'
-                } la categoría ${record?.name}?`,
+                } el tipo de documento ${record?.name}?`,
             );
             setTypeModal('confirm');
             setOpen(true);
@@ -159,7 +159,7 @@ const TypeDocument = () => {
                 setTextModal(
                     `Ocurrio un error al ${
                         action === 'save' ? 'guardar' : 'actualizar'
-                    } la categoría ${data?.name}`,
+                    } el tipo de documento ${data?.name}`,
                 );
                 setTypeModal('error');
             }
@@ -176,7 +176,9 @@ const TypeDocument = () => {
                 setData(undefined);
                 getTypesDocuments();
             } else {
-                setTextModal(`Ocurrio un error al eliminar la categoría ${data?.name}`);
+                setTextModal(
+                    `Ocurrio un error al eliminar el tipo de documento ${data?.name}`,
+                );
                 setTypeModal('error');
             }
         }
